@@ -1,0 +1,7 @@
+
+
+http://3dgep.com/texturing-and-lighting-with-opengl-and-glsl/
+
+
+the Earth: it works, but...
+http://stackoverflow.com/questions/16656776/sphere-texture-mapping-opengl-and-c

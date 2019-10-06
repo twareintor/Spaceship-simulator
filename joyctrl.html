@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>joyctrl.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="SynEdit HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #FFFFFF; }
+.cpp1-assembler { color: #000000; }
+.cpp1-character { color: #000000; }
+.cpp1-comment { color: #008000; }
+.cpp1-float { color: #000000; }
+.cpp1-hexadecimal { color: #000000; }
+.cpp1-identifier { color: #000000; }
+.cpp1-illegalchar { color: #FF0000; }
+.cpp1-number { color: #000000; }
+.cpp1-octal { color: #000000; }
+.cpp1-preprocessor { color: #0000FF; }
+.cpp1-reservedword { color: #0000FF; }
+.cpp1-space { background-color: #FFFFFF; }
+.cpp1-string { color: #000000; }
+.cpp1-symbol { color: #000000; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<code><span style="font: 3pt Courier;"><span class="cpp1-comment">/****************************************************************************************************/
+
+</span><span class="cpp1-preprocessor">#include &quot;joyctrl.h&quot;
+
+
+void</span><span class="cpp1-space"> ParseRawInput(PRAWINPUT pRawInput, CxJoyStk* pJoX)
+{
+	PHIDP_PREPARSED_DATA pPreparsedData;
+	HIDP_CAPS            Caps;
+	PHIDP_BUTTON_CAPS    pButtonCaps;
+	PHIDP_VALUE_CAPS     pValueCaps;
+	USHORT               capsLength;
+	UINT                 bufferSize;
+	HANDLE               hHeap;
+	USAGE                usage[MAX_BUTTONS];
+	ULONG                i, usageLength, value;
+
+	pPreparsedData = NULL;
+	pButtonCaps    = NULL;
+	pValueCaps     = NULL;
+	hHeap          = GetProcessHeap();
+
+	</span><span class="cpp1-comment">//
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Get the preparsed data block
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//
+
+</span><span class="cpp1-space">	CHECK( GetRawInputDeviceInfo(pRawInput-&gt;header.hDevice, RIDI_PREPARSEDDATA, NULL, &amp;bufferSize) == 0 );
+	CHECK( pPreparsedData = (PHIDP_PREPARSED_DATA)HeapAlloc(hHeap, 0, bufferSize) );
+	CHECK( (</span><span class="cpp1-reservedword">int</span><span class="cpp1-symbol">)GetRawInputDeviceInfo(pRawInput-&gt;header.hDevice, RIDI_PREPARSEDDATA, pPreparsedData, &amp;bufferSize) &gt;= 0 );
+
+	</span><span class="cpp1-comment">//
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Get the joystick's capabilities
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//
+
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Button caps
+</span><span class="cpp1-space">	CHECK( HidP_GetCaps(pPreparsedData, &amp;Caps) == HIDP_STATUS_SUCCESS )
+	CHECK( pButtonCaps = (PHIDP_BUTTON_CAPS)HeapAlloc(hHeap, 0, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(HIDP_BUTTON_CAPS) * Caps.NumberInputButtonCaps) );
+
+	capsLength = Caps.NumberInputButtonCaps;
+	CHECK( HidP_GetButtonCaps(HidP_Input, pButtonCaps, &amp;capsLength, pPreparsedData) == HIDP_STATUS_SUCCESS )
+	pJoX-&gt;g_NumberOfButtons = pButtonCaps-&gt;Range.UsageMax - pButtonCaps-&gt;Range.UsageMin + 1;
+
+	</span><span class="cpp1-comment">// Value caps
+</span><span class="cpp1-space">	CHECK( pValueCaps = (PHIDP_VALUE_CAPS)HeapAlloc(hHeap, 0, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(HIDP_VALUE_CAPS) * Caps.NumberInputValueCaps) );
+	capsLength = Caps.NumberInputValueCaps;
+	CHECK( HidP_GetValueCaps(HidP_Input, pValueCaps, &amp;capsLength, pPreparsedData) == HIDP_STATUS_SUCCESS )
+
+	</span><span class="cpp1-comment">//
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Get the pressed buttons
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//
+
+</span><span class="cpp1-space">	usageLength = pJoX-&gt;g_NumberOfButtons;
+	CHECK(
+		HidP_GetUsages(
+			HidP_Input, pButtonCaps-&gt;UsagePage, 0, usage, &amp;usageLength, pPreparsedData,
+			(PCHAR)pRawInput-&gt;data.hid.bRawData, pRawInput-&gt;data.hid.dwSizeHid
+		) == HIDP_STATUS_SUCCESS );
+
+	ZeroMemory(pJoX-&gt;bButtonStates, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(pJoX-&gt;bButtonStates));
+	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(i = 0; i &lt; usageLength; i++)
+		pJoX-&gt;bButtonStates[usage[i] - pButtonCaps-&gt;Range.UsageMin] = TRUE;
+
+	</span><span class="cpp1-comment">//
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Get the state of discrete-valued-controls
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//
+
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(i = 0; i &lt; Caps.NumberInputValueCaps; i++)
+	{
+		CHECK(
+			HidP_GetUsageValue(
+				HidP_Input, pValueCaps[i].UsagePage, 0, pValueCaps[i].Range.UsageMin, &amp;value, pPreparsedData,
+				(PCHAR)pRawInput-&gt;data.hid.bRawData, pRawInput-&gt;data.hid.dwSizeHid
+			) == HIDP_STATUS_SUCCESS );
+
+		</span><span class="cpp1-reservedword">switch</span><span class="cpp1-symbol">(pValueCaps[i].Range.UsageMin)
+		{
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 0x30:	</span><span class="cpp1-comment">// X-axis
+</span><span class="cpp1-space">			pJoX-&gt;lAxisX = (LONG)value - 128;
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 0x31:	</span><span class="cpp1-comment">// Y-axis
+</span><span class="cpp1-space">			pJoX-&gt;lAxisY = (LONG)value - 128;
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 0x32: </span><span class="cpp1-comment">// Z-axis
+</span><span class="cpp1-space">			pJoX-&gt;lAxisZ = (LONG)value - 128;
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 0x35: </span><span class="cpp1-comment">// Rotate-Z
+</span><span class="cpp1-space">			pJoX-&gt;lAxisRz = (LONG)value - 128;
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 0x39:	</span><span class="cpp1-comment">// Hat Switch
+</span><span class="cpp1-space">			pJoX-&gt;lHat = value;
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		}
+	}
+
+	</span><span class="cpp1-comment">//
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Clean up
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//
+
+</span><span class="cpp1-identifier">Error:
+	SAFE_FREE(pPreparsedData);
+	SAFE_FREE(pButtonCaps);
+	SAFE_FREE(pValueCaps);
+}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> PrintJoystickCoords(CxJoyStk* pJoX, HDC hdc)
+{
+	LPWSTR			wszMsg = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+ 
+	TextOutW(hdc, 4, 600, L&quot;Stick control:&quot;, 14);
+	swprintf(wszMsg, L&quot; lAX: %0000d    lAY: %0000d    lAZ: %0000d&quot;, pJoX-&gt;lAxisX, pJoX-&gt;lAxisY, pJoX-&gt;lAxisZ);
+	TextOutW(hdc, 4, 612, wszMsg, wcslen(wszMsg));
+	swprintf(wszMsg, L&quot; iNB: %0000d    lAR: %0000d    lHa: %0000d&quot;, pJoX-&gt;g_NumberOfButtons, pJoX-&gt;lAxisRz, pJoX-&gt;lHat);
+	TextOutW(hdc, 4, 624, wszMsg, wcslen(wszMsg));
+	GlobalFree(wszMsg);
+
+	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;	
+}
+
+
+
+
+</span><span class="cpp1-comment">/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/****************************************************************************************************/
+
+
+</span></span>
+</code></pre>
+</body>
+</html>

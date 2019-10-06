@@ -1,0 +1,16 @@
+///////////// resource.h
+
+
+#ifndef IDC_STATIC
+#define IDC_STATIC (-1)
+#endif
+
+
+
+#define 	IDB_TEX_101		1
+#define 	IDB_TEX_102		2
+#define 	IDB_TEX_103		3
+#define 	IDB_TEX_104		4
+#define 	IDB_TEX_105		5
+#define 	IDB_TEX_106		6
+#define 	IDB_TEX_107		7

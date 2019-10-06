@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>main.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="SynEdit HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #FFFFFF; }
+.cpp1-assembler { color: #000000; }
+.cpp1-character { color: #000000; }
+.cpp1-comment { color: #008000; }
+.cpp1-float { color: #000000; }
+.cpp1-hexadecimal { color: #000000; }
+.cpp1-identifier { color: #000000; }
+.cpp1-illegalchar { color: #FF0000; }
+.cpp1-number { color: #000000; }
+.cpp1-octal { color: #000000; }
+.cpp1-preprocessor { color: #0000FF; }
+.cpp1-reservedword { color: #0000FF; }
+.cpp1-space { background-color: #FFFFFF; }
+.cpp1-string { color: #000000; }
+.cpp1-symbol { color: #000000; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<code><span style="font: 3pt Courier;"><span class="cpp1-comment">/**************************
+ * Includes
+ *
+ **************************/
+
+</span><span class="cpp1-preprocessor">#include &quot;testogl.h&quot;
+#include &quot;joyctrl.h&quot;
+
+
+</span><span class="cpp1-comment">/**************************
+ * Function Declarations
+ *
+ **************************/
+
+</span><span class="cpp1-identifier">LRESULT CALLBACK WndProc (HWND hWnd, UINT message,
+WPARAM wParam, LPARAM lParam);
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC);
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC);
+
+
+</span><span class="cpp1-comment">/**************************
+ * WinMain
+ *
+ **************************/
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> WINAPI WinMain (HINSTANCE hInstance,
+                    HINSTANCE hPrevInstance,
+                    LPSTR lpCmdLine,
+                    </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> iCmdShow)
+{
+    WNDCLASS wc;
+    HWND hWnd;
+    HDC hDC;
+    HGLRC hRC;        
+    MSG msg;
+    BOOL bQuit = FALSE;
+    </span><span class="cpp1-comment">// float theta = 0.0f;
+
+</span><span class="cpp1-space">    </span><span class="cpp1-comment">/* register window class */
+</span><span class="cpp1-space">    wc.style = CS_OWNDC;
+    </span><span class="cpp1-comment">// wc.style = CS_CLASSDC;
+</span><span class="cpp1-space">    wc.lpfnWndProc = WndProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = hInstance;
+    wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+    wc.hCursor = LoadCursor (NULL, IDC_ARROW);
+    wc.hbrBackground = CreateSolidBrush(RGB(127, 18, 127));
+	wc.lpszMenuName = NULL;
+    wc.lpszClassName = &quot;GLSample&quot;;
+    RegisterClass (&amp;wc);
+
+    </span><span class="cpp1-comment">/* create main window */
+</span><span class="cpp1-space">    HDC 	hdcMainScr = GetWindowDC(NULL);
+    hWnd = CreateWindow (
+      &quot;GLSample&quot;, &quot;OpenGL Sample&quot;, 
+      WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE,
+      0, 
+	  0, 
+	  GetDeviceCaps(hdcMainScr, HORZRES), 
+	  GetDeviceCaps(hdcMainScr, HORZRES)*9/16,
+      NULL, NULL, hInstance, NULL);
+
+    </span><span class="cpp1-comment">/* enable OpenGL for the window */
+</span><span class="cpp1-space">    EnableOpenGL (hWnd, &amp;hDC, &amp;hRC);
+	</span><span class="cpp1-comment">// now the initialization of the game, and the start screen:
+</span><span class="cpp1-space">	Initializations(60.0, (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)GetDeviceCaps(hdcMainScr, HORZRES), (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)(GetDeviceCaps(hdcMainScr, HORZRES)*600/900));
+	ShowCursor(FALSE);
+	</span><span class="cpp1-comment">//when create window class for application window
+</span><span class="cpp1-space">    </span><span class="cpp1-comment">/* program main loop */
+</span><span class="cpp1-space">    </span><span class="cpp1-reservedword">while</span><span class="cpp1-space"> (!bQuit)
+    {
+        </span><span class="cpp1-comment">/* check for messages */
+</span><span class="cpp1-space">        </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (PeekMessage (&amp;msg, NULL, 0, 0, PM_REMOVE))
+        {
+            </span><span class="cpp1-comment">/* handle or dispatch messages */
+</span><span class="cpp1-space">            </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (msg.message == WM_QUIT)
+            {
+                bQuit = TRUE;
+            }
+            </span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">            {
+                TranslateMessage (&amp;msg);
+                DispatchMessage (&amp;msg);
+            }
+        }
+        </span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">        {
+            </span><span class="cpp1-comment">/* OpenGL animation code goes here */
+</span><span class="cpp1-space">			</span><span class="cpp1-comment">// not here, but in the main loop of WndProc()
+</span><span class="cpp1-space">        }
+    }
+ 
+    </span><span class="cpp1-comment">/* shutdown OpenGL */
+</span><span class="cpp1-space">    DisableOpenGL (hWnd, hDC, hRC);
+	ShowCursor(TRUE);
+    </span><span class="cpp1-comment">/* destroy the window explicitly */
+</span><span class="cpp1-space">    DestroyWindow (hWnd);
+
+    </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> msg.wParam;
+}
+
+
+</span><span class="cpp1-comment">/********************
+ * Window Procedure
+ *
+ ********************/
+
+</span><span class="cpp1-identifier">LRESULT CALLBACK WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> HDC 		hdc;
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> BOOL		bTest;
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> BOOL 	bLight;
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fds;			</span><span class="cpp1-comment">// delta-s displacement along the axis of view
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fdq;			</span><span class="cpp1-comment">// delta-s variable displacement to simulate acceleration
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fas;			</span><span class="cpp1-comment">// delta-s displacement iterated one-by-one in timer to simulate accelerating/ decelerating
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> 	fdt;			</span><span class="cpp1-comment">// delta-theta 		// Azimouth deviation
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fdf;			</span><span class="cpp1-comment">// delta-phi		// elevation deviation 
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fdh;			</span><span class="cpp1-comment">// delta-hi			// normal deviation 
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">double</span><span class="cpp1-space">	R;				</span><span class="cpp1-comment">// the distance to the poiningn object // 
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> 	fX, fY, fZ;
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> CxCam	Cam;
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fAng;			</span><span class="cpp1-comment">// angle of rotation for glRotatef() function for special effects:
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> BOOL		bMove;				</span><span class="cpp1-comment">// engine status
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> BOOL		bJoyX;			</span><span class="cpp1-comment">// command taken from joystick
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> BOOL		bStop;			</span><span class="cpp1-comment">// engine stopped
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> BOOL		brake;			</span><span class="cpp1-comment">// brake pressed
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> BOOL		bBall;			</span><span class="cpp1-comment">// there is a ball or not on the scene...
+
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> HFONT	hFont;
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> HFONT	hFOld;
+	
+	</span><span class="cpp1-reservedword">static</span><span class="cpp1-space"> POINT	pM[2];			</span><span class="cpp1-comment">// Mouse position
+</span><span class="cpp1-space">	
+	LPWSTR 			wszMsg = (LPWSTR)GlobalAlloc(GPTR, 0xff);
+   	</span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> (message)
+    {
+	    </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_CREATE:
+	    {
+			bTest = FALSE;
+	    	bLight = FALSE;
+	    	fds = 0.1f;						</span><span class="cpp1-comment">// 10 cm
+</span><span class="cpp1-space">			fX = 0.0f; fY = 0.0f; fZ = 0.0f;
+			fdt = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)DEG;						</span><span class="cpp1-comment">// 1 Deg.
+</span><span class="cpp1-space">			fdf = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)DEG;						</span><span class="cpp1-comment">// 1 Deg.
+</span><span class="cpp1-space">			ZeroMemory(&amp;Cam, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(CxCam));
+			ZeroMemory(pM, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(POINT)*2);
+			Cam.R = 2.0f;
+			Cam.x = 0.0f;
+			Cam.x0 = Cam.x+Cam.R;
+			Cam.z = 1.75f;
+			Cam.z0 = Cam.z;		</span><span class="cpp1-comment">// look direct to the horizon
+</span><span class="cpp1-space">			Cam.zv = 1.0f;		</span><span class="cpp1-comment">// normal vector oriented just up
+</span><span class="cpp1-space">			fAng = 0.0f;
+			bMove = FALSE;		</span><span class="cpp1-comment">// engine stopped
+</span><span class="cpp1-space">			bJoyX = FALSE;		</span><span class="cpp1-comment">// no default control to joystick, but mouse at first
+</span><span class="cpp1-space">			bStop = TRUE;		</span><span class="cpp1-comment">// engine stopped
+</span><span class="cpp1-space">			brake = FALSE;		</span><span class="cpp1-comment">// no break pressed
+</span><span class="cpp1-space">			
+			bBall = FALSE;		</span><span class="cpp1-comment">// no ball on the scene...
+</span><span class="cpp1-space">			</span><span class="cpp1-comment">// R = sqrt((Cam.x0-Cam.x)*(Cam.x0-Cam.x)+(Cam.y0-Cam.y)*(Cam.y0-Cam.y)+(Cam.z0-Cam.z)*(Cam.z0-Cam.z));
+</span><span class="cpp1-space">			swprintf(wszMsg, L&quot;R = %g (it must be 1.0)&quot;, R);
+			</span><span class="cpp1-comment">// MessageBoxW(NULL, wszMsg, L&quot;&quot;, MB_OK);
+</span><span class="cpp1-space">			hdc = GetDC(hWnd);
+			</span><span class="cpp1-comment">// Print welcome string:
+</span><span class="cpp1-space">			hFont = CreateFont(10,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY, VARIABLE_PITCH,TEXT(&quot;Courier&quot;));
+            hFOld = (HFONT)SelectObject(hdc, hFont);
+            SetBkMode(hdc, TRANSPARENT);
+            SetTextColor(hdc, RGB(255, 255, 0));
+            </span><span class="cpp1-comment">/////// code for joystick:
+</span><span class="cpp1-space">            			</span><span class="cpp1-comment">// Register for joystick devices
+</span><span class="cpp1-space">			</span><span class="cpp1-comment">//
+
+</span><span class="cpp1-space">			RAWINPUTDEVICE rid;
+
+			rid.usUsagePage = 1;
+			rid.usUsage     = 4;	</span><span class="cpp1-comment">// Joystick
+</span><span class="cpp1-space">			rid.dwFlags     = 0;
+			rid.hwndTarget  = hWnd;
+
+			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(RegisterRawInputDevices(&amp;rid, 1, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(RAWINPUTDEVICE)))
+			{
+				bJoyX = TRUE;
+			}
+			</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">			{
+				MessageBoxW(NULL, L&quot;Joystick registering failed&quot;, L&quot;Joystick message&quot;, MB_OK);
+			}
+	    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	    }
+	    </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_ACTIVATE:
+	    {
+	    	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(LOWORD(wParam==WA_ACTIVE))
+	    	{
+		    	Redraw(hdc, </span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">, &amp;Cam);
+		    	MoveIt(&amp;Cam, 0.0);
+		    	RotateIt(&amp;Cam, 0.0, 0.0);
+	    	}
+	    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	    }
+	    </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_CLOSE:
+	    {
+	    	GlobalFree(wszMsg);
+	        SelectObject(hdc, hFOld);
+	        ReleaseDC(hWnd, hdc);
+	        ShowCursor(TRUE);
+			PostQuitMessage (0);
+	        </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+	    }
+	    </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_DESTROY:
+		{
+			ReleaseDC(hWnd, hdc);
+	        </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;	
+		}
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_INPUT:
+		{
+			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bJoyX)
+			{
+				</span><span class="cpp1-comment">//
+</span><span class="cpp1-space">				</span><span class="cpp1-comment">// Get the pointer to the raw device data, process it and update the window
+</span><span class="cpp1-space">				</span><span class="cpp1-comment">//
+</span><span class="cpp1-space">				CxJoyStk* pJoX = (CxJoyStk*)GlobalAlloc(GPTR, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(CxJoyStk));
+				
+				PRAWINPUT pRawInput;
+				UINT      bufferSize;
+				HANDLE    hHeap;
+	
+				GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &amp;bufferSize, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(RAWINPUTHEADER));
+	
+				hHeap     = GetProcessHeap();
+				pRawInput = (PRAWINPUT)HeapAlloc(hHeap, 0, bufferSize);
+				</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(!pRawInput)
+					</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+	
+				GetRawInputData((HRAWINPUT)lParam, RID_INPUT, pRawInput, &amp;bufferSize, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(RAWINPUTHEADER));
+				ParseRawInput(pRawInput, pJoX);
+	
+				HeapFree(hHeap, 0, pRawInput);
+	
+				</span><span class="cpp1-comment">// InvalidateRect(hWnd, NULL, TRUE);
+</span><span class="cpp1-space">				</span><span class="cpp1-comment">// UpdateWindow(hWnd);
+</span><span class="cpp1-space">				PrintJoystickCoords(pJoX, hdc);
+				</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bMove)		</span><span class="cpp1-comment">// replace with a condition like activating the joystick
+</span><span class="cpp1-space">				{
+					fds = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)pJoX-&gt;lAxisY/128;
+					fds = -fds;
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fds&gt;+0.9)		fds=+0.9;
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fds&lt;-0.9)		fds=-0.9;
+				}
+				</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bMove)		</span><span class="cpp1-comment">// replace with a condition like activating the joystick
+</span><span class="cpp1-space">				{
+					fdt = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)pJoX-&gt;lAxisX*0.1/DEG;
+					fdt = -fdt;
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fdt&gt;+35*DEG)		fdt=+35*DEG;
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fdt&lt;-35*DEG)		fdt=-35*DEG;
+				}
+				</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pJoX-&gt;lHat==1)
+				{
+					RotateIt(&amp;Cam, 0.0, +fdf*0.2);
+					</span><span class="cpp1-comment">// Redraw(hdc, bLight, pCam);		// redraw will be automatically done by the timer...
+</span><span class="cpp1-space">				}
+				</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pJoX-&gt;lHat==5)
+				{
+					RotateIt(&amp;Cam, 0.0, -fdf*0.2);
+					</span><span class="cpp1-comment">// Redraw(hdc, bLight, pCam);		// redraw will be automatically done by the timer...
+</span><span class="cpp1-space">				}
+				GlobalFree(pJoX);
+			}
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		}
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_RBUTTONDOWN:
+		{
+			</span><span class="cpp1-comment">// MessageBoxW(NULL, L&quot;here&quot;, L&quot;&quot;, MB_OK);
+</span><span class="cpp1-space">			TestBitmap(hdc);
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		}
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_MOUSEWHEEL:
+		{
+			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bMove)
+			{
+				</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> 	fD = GET_WHEEL_DELTA_WPARAM(wParam)/120.0/50;
+				</span><span class="cpp1-reservedword">switch</span><span class="cpp1-symbol">(LOWORD(wParam))
+				{
+					</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> MK_SHIFT:
+					{
+						Cam.y+=fD;
+						Cam.y0+=fD;
+						MoveIt(&amp;Cam, 0.0);
+						</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+					}
+					</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> MK_CONTROL:
+					{
+						Cam.z+=fD;
+						Cam.z0+=fD;
+						MoveIt(&amp;Cam, 0.0);
+						</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+					}
+					</span><span class="cpp1-reservedword">default</span><span class="cpp1-symbol">:
+					{
+						fdf = fD/5.0;
+						RotateIt(&amp;Cam, 0.0, fdf);
+						</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+					}
+				}
+			}
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		}
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_MOUSEMOVE:
+		{
+			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(!bJoyX)
+			{
+				</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bMove)
+				{
+					pM[1].x = LOWORD(lParam); 	</span><span class="cpp1-comment">// read the new position of the mouse to give the direction to move
+</span><span class="cpp1-space">					pM[1].y = HIWORD(lParam);
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((abs(pM[1].y-pM[0].y))&gt;10)		</span><span class="cpp1-comment">// y for mouse is x for the scene!!!
+</span><span class="cpp1-space">					{
+						fds = (pM[1].y-pM[0].y-10)/250.0;
+						fds = -fds;
+						</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fds&gt;+0.9)		fds=+0.9;
+						</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fds&lt;-0.9)		fds=-0.9;
+					}
+					</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">					{
+						fds = 0.0;
+					}
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((abs(pM[1].x-pM[0].x))&gt;(abs(fds)&lt;0.01)*10)		</span><span class="cpp1-comment">// x for mouse is y for the scene!!!
+</span><span class="cpp1-space">					{ 	
+						fdt = (pM[1].x-pM[0].x-10)/25.0/DEG;
+						fdt = -fdt;
+						</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fdt&gt;+5*DEG)		fdt=+5*DEG;
+						</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fdt&lt;-5*DEG)		fdt=-5*DEG;
+					}
+					</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">					{
+						fdt = 0.0;
+					}
+				}
+				</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">				{
+					pM[0].x = LOWORD(lParam); 	</span><span class="cpp1-comment">// conserve the las position of the mouse when engine is not started
+</span><span class="cpp1-space">					pM[0].y = HIWORD(lParam);
+				}
+			}
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		}
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_TIMER:
+		{
+			</span><span class="cpp1-reservedword">switch</span><span class="cpp1-symbol">(wParam)
+			{
+				</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> ID_TIMER:
+				{
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fdt)		</span><span class="cpp1-comment">// if direction...
+</span><span class="cpp1-space">					{
+						RotateIt(&amp;Cam, +fdt, 0.0);
+					}
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(fds+fdq)
+					{
+						</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(!bStop)		</span><span class="cpp1-comment">// accelerating	effect by moving along
+</span><span class="cpp1-space">							fdq+=(fds-fdq)*0.05;		</span><span class="cpp1-comment">// speed ispoint following the setpoint
+</span><span class="cpp1-space">						</span><span class="cpp1-reservedword">else</span><span class="cpp1-space">			</span><span class="cpp1-comment">// decelerating 
+</span><span class="cpp1-space">							fdq*=0.95;		</span><span class="cpp1-comment">// speed ispoint decreasing till zero...
+</span><span class="cpp1-space">						MoveIt(&amp;Cam, fdq);
+					}
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bStop)		</span><span class="cpp1-comment">// if engine stopped by user ...
+</span><span class="cpp1-space">					{
+	    				</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((fdq&gt;-0.005)&amp;&amp;(fdq&lt;+0.005))	</span><span class="cpp1-comment">// if engine is stopped and no more speed
+</span><span class="cpp1-space">	    				{
+							KillTimer(hWnd, ID_TIMER);        </span><span class="cpp1-comment">// Timer to move...
+</span><span class="cpp1-space">							fds = 0.1;		</span><span class="cpp1-comment">// reset all to the initial values
+</span><span class="cpp1-space">							fdq = 0.0;		
+							fdt = DEG;
+							fdf = DEG;
+		        			bMove = FALSE;
+	    				}
+					}
+					</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(brake)		</span><span class="cpp1-comment">// ... as long as the brake is pressed
+</span><span class="cpp1-space">					{
+						fds = 0.0;			</span><span class="cpp1-comment">// speed setpoint to zero
+</span><span class="cpp1-space">						fdq*=0.75;			</span><span class="cpp1-comment">// speed ispoint decreasing
+</span><span class="cpp1-space">						</span><span class="cpp1-comment">// condition for fdq....???&gt;
+</span><span class="cpp1-space">						fdt = 0.0;			</span><span class="cpp1-comment">// no angle movements
+</span><span class="cpp1-space">						fdf = 0.0;
+					}
+    				Redraw(hdc, bLight, &amp;Cam);
+					PrintCoords(&amp;Cam, hdc);
+    				PrintParams(fds, fdq, fdt, fdf, hdc);
+					</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+				}
+				</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> ID_TIMES:
+				{
+					</span><span class="cpp1-comment">// SetFAng(fAng++);			// __???
+</span><span class="cpp1-space">					</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+				}
+			}
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		}
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_KEYUP:
+		{
+			</span><span class="cpp1-reservedword">switch</span><span class="cpp1-symbol">(wParam)
+			{
+				</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_SPACE:
+				{
+					brake = FALSE;		</span><span class="cpp1-comment">// brake released
+</span><span class="cpp1-space">					pM[0].x = pM[1].x;
+					pM[0].y = pM[1].y;	</span><span class="cpp1-comment">// in order to not to have to readuce the mouse in the zero-position
+</span><span class="cpp1-space">					</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+				}
+			}
+			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		}
+	    </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> WM_KEYDOWN:
+	        </span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> (wParam)
+	        {
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_RETURN:
+	        	{
+	        		</span><span class="cpp1-comment">// MoveIt(&amp;Cam, +fds);
+</span><span class="cpp1-space">	        		Redraw(hdc, bLight, &amp;Cam);
+	        		PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-comment">// Rotation effects of some elements (cubes)
+</span><span class="cpp1-space">	        		</span><span class="cpp1-comment">// SetTimer(hWnd, ID_TIMES, 50, NULL);
+</span><span class="cpp1-space">	        		</span><span class="cpp1-comment">// MoveIt(&amp;Cam, 0.0);
+</span><span class="cpp1-space">	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+		        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_ESCAPE:		</span><span class="cpp1-comment">// terminating the application
+</span><span class="cpp1-space">	        	{
+			    	GlobalFree(wszMsg);
+			        SelectObject(hdc, hFOld);
+			        ReleaseDC(hWnd, hdc);
+			        ShowCursor(TRUE);
+					PostQuitMessage (0);
+		            </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+        		}
+        		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_INSERT:		</span><span class="cpp1-comment">// starting the engines
+</span><span class="cpp1-space">        		{
+					</span><span class="cpp1-comment">// starting effect:
+</span><span class="cpp1-space">        			</span><span class="cpp1-comment">// end of starting effect
+</span><span class="cpp1-space">        			bStop = FALSE;
+        			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(!bMove)
+					{
+						SetTimer(hWnd, ID_TIMER, 50, NULL);
+						fds = 0.0;		</span><span class="cpp1-comment">// set all to zero, in order to be set again from the mouse position
+</span><span class="cpp1-space">						fdq = 0.0;		</span><span class="cpp1-comment">//       and the start value of the speed on acceleration
+</span><span class="cpp1-space">						fdt = 0.0;		</span><span class="cpp1-comment">//		and the increment value of the angle
+</span><span class="cpp1-space">					}
+					bMove = TRUE;
+        			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+        		}
+        		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_DELETE:		</span><span class="cpp1-comment">// engine stop
+</span><span class="cpp1-space">        		{
+    				</span><span class="cpp1-comment">// first stop attenuately:
+</span><span class="cpp1-space">    				bStop = TRUE;
+    				bMove = FALSE;
+        			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+        		}
+        		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_SPACE:		</span><span class="cpp1-comment">// brake triggered
+</span><span class="cpp1-space">        		{
+        			brake = TRUE;
+        			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+        		}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_UP:			</span><span class="cpp1-comment">// move  forward alongside the eye==&gt;pointing direction
+</span><span class="cpp1-space">	        	{
+					MoveIt(&amp;Cam, +fds);
+					Redraw(hdc, bLight, &amp;Cam);
+					PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_DOWN:		</span><span class="cpp1-comment">// move backwards 
+</span><span class="cpp1-space">	        	{
+					MoveIt(&amp;Cam, -fds);
+					Redraw(hdc, bLight, &amp;Cam);
+					PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+		        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_RIGHT:		</span><span class="cpp1-comment">// turn right
+</span><span class="cpp1-space">	        	{	
+	        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(GetKeyState(VK_SHIFT)&lt;0)
+	        		{
+	        			Cam.y-=fdt; Cam.y0-=fdt;
+	        		}
+	        		</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">	        		{
+	        			</span><span class="cpp1-comment">// RotateIt(&amp;Cam, -fdt, 0.0);
+</span><span class="cpp1-space">	        			TurnIt(&amp;Cam, -fdt, 0.0, 0.0);
+	        		}
+	        		Redraw(hdc, bLight, &amp;Cam);
+	        		PrintCoords(&amp;Cam, hdc);
+					</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_LEFT:		</span><span class="cpp1-comment">// turn left
+</span><span class="cpp1-space">	        	{
+	        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(GetKeyState(VK_SHIFT)&lt;0)
+	        		{
+	        			Cam.y+=fdt; Cam.y0+=fdt;
+	        		}
+	        		</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">	        		{
+						</span><span class="cpp1-comment">// RotateIt(&amp;Cam, +fdt, 0.0);
+</span><span class="cpp1-space">						TurnIt(&amp;Cam, +fdt, 0.0, 0.0);
+					}
+					Redraw(hdc, bLight, &amp;Cam);
+					PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_PRIOR:		</span><span class="cpp1-comment">// turn up
+</span><span class="cpp1-space">	        	{
+	        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(GetKeyState(VK_SHIFT)&lt;0)
+	        		{
+	        			Cam.z+=fdf; Cam.z0+=fdf;
+	        		}
+	        		</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">	        		{
+		        		RotateIt(&amp;Cam, 0.0, +fdf);
+	        		}
+					Redraw(hdc, bLight, &amp;Cam);
+					PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_NEXT:		</span><span class="cpp1-comment">// turn down
+</span><span class="cpp1-space">	        	{
+	        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(GetKeyState(VK_SHIFT)&lt;0)
+	        		{
+	        			Cam.z-=fdf; Cam.z0-=fdf;
+	        		}
+	        		</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">	        		{
+		        		RotateIt(&amp;Cam, 0.0, -fdf);
+	        		}
+					Redraw(hdc, bLight, &amp;Cam);
+					PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_F2:			</span><span class="cpp1-comment">// mouse/ joystick control switch
+</span><span class="cpp1-space">	        	{
+	        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bStop)
+	        		{
+		        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bJoyX)
+		        		{
+		        			MessageBoxW(NULL, L&quot;Mouse control&quot;, L&quot;Input option changed&quot;, MB_OK);
+						}
+						</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">						{
+							MessageBoxW(NULL, L&quot;Stick control&quot;, L&quot;Input option changed&quot;, MB_OK);
+						}
+						bJoyX = !bJoyX;
+					}
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+				}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_F3:			</span><span class="cpp1-comment">// decrease focus distance
+</span><span class="cpp1-space">	        	{
+	        		Cam.R-=1;		</span><span class="cpp1-comment">// haves absolutely no effect
+</span><span class="cpp1-space">	        		Redraw(hdc, bLight, &amp;Cam);
+	        		PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_F4:			</span><span class="cpp1-comment">// increase focus distance
+</span><span class="cpp1-space">	        	{
+	        		Cam.R+=1;		</span><span class="cpp1-comment">// haves absolutely no effect!
+</span><span class="cpp1-space">	        		Redraw(hdc, bLight, &amp;Cam);
+	        		PrintCoords(&amp;Cam, hdc);
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        		
+	        	}
+	        	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> VK_HOME:		</span><span class="cpp1-comment">// back to the origin
+</span><span class="cpp1-space">	        	{	
+	        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(bStop)
+	        		{
+		        		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> nOpt = MessageBoxW(NULL, L&quot;Would you like to return to the start?&quot;, L&quot;Back to the start&quot;, MB_YESNO);
+		        		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(nOpt==IDYES)
+	        			{
+							ZeroMemory(&amp;Cam, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(CxCam));
+							Cam.R = 2;
+							Cam.x = 0.0;
+							Cam.x0 = Cam.x+Cam.R;
+							Cam.z = 1.75;
+							Cam.z0 = Cam.z;		</span><span class="cpp1-comment">// look direct to the horizon
+</span><span class="cpp1-space">							Cam.zv = 1.0;		</span><span class="cpp1-comment">// for the moment, constant
+</span><span class="cpp1-space">							MoveIt(&amp;Cam, +fds);
+							Redraw(hdc, bLight, &amp;Cam);
+							PrintCoords(&amp;Cam, hdc);
+	        			}
+	        		}
+	        		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        	}
+	   	        </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	        }
+	        </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+	    </span><span class="cpp1-reservedword">default</span><span class="cpp1-symbol">:
+		{
+			</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> DefWindowProc (hWnd, message, wParam, lParam);
+	    }
+    }
+}
+
+
+</span><span class="cpp1-comment">/*******************
+ * Enable OpenGL
+ *
+ *******************/
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC)
+{
+    PIXELFORMATDESCRIPTOR pfd;
+    </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> iFormat;
+
+    </span><span class="cpp1-comment">/* get the device context (DC) */
+</span><span class="cpp1-space">    *hDC = GetDC (hWnd);
+
+    </span><span class="cpp1-comment">/* set the pixel format for the DC */
+</span><span class="cpp1-space">    ZeroMemory (&amp;pfd, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-space"> (pfd));
+    pfd.nSize = </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-space"> (pfd);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW|PFD_SUPPORT_OPENGL|PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 24;
+    pfd.cDepthBits = 16;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+    iFormat = ChoosePixelFormat (*hDC, &amp;pfd);
+    SetPixelFormat (*hDC, iFormat, &amp;pfd);
+
+    </span><span class="cpp1-comment">/* create and enable the render context (RC) */
+</span><span class="cpp1-space">    *hRC = wglCreateContext( *hDC );
+    wglMakeCurrent( *hDC, *hRC );
+
+}
+
+
+</span><span class="cpp1-comment">/******************
+ * Disable OpenGL
+ *
+ ******************/
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC)
+{
+    wglMakeCurrent (NULL, NULL);
+    wglDeleteContext (hRC);
+    ReleaseDC (hWnd, hDC);
+}
+
+
+
+
+</span></span>
+</code></pre>
+</body>
+</html>

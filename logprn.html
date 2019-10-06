@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>logprn.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="SynEdit HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #FFFFFF; }
+.cpp1-assembler { color: #000000; }
+.cpp1-character { color: #000000; }
+.cpp1-comment { color: #008000; }
+.cpp1-float { color: #000000; }
+.cpp1-hexadecimal { color: #000000; }
+.cpp1-identifier { color: #000000; }
+.cpp1-illegalchar { color: #FF0000; }
+.cpp1-number { color: #000000; }
+.cpp1-octal { color: #000000; }
+.cpp1-preprocessor { color: #0000FF; }
+.cpp1-reservedword { color: #0000FF; }
+.cpp1-space { background-color: #FFFFFF; }
+.cpp1-string { color: #000000; }
+.cpp1-symbol { color: #000000; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<code><span style="font: 3pt Courier;"><span class="cpp1-preprocessor">#include &quot;logprn.h&quot;
+
+</span><span class="cpp1-identifier">LogFile::LogFile(LPCWSTR wszFNm, LPWSTR wszLogName)
+{
+	wszAppName = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+	wszExeName = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+	wszAppPath = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+	GetModuleFileNameW(NULL, wszAppName, 0x400);
+    wszExeName = wcsrchr(wszAppName, L'\\');
+    wcsncpy(wszAppPath, wszAppName, wszExeName-wszAppName);
+    </span><span class="cpp1-comment">// MessageBoxW(NULL, wszAppPath, wszAppPath, MB_OK);
+</span><span class="cpp1-space">	swprintf(wszLogName, L&quot;%s&quot;, wszAppPath);
+    wcscat(wszLogName, L&quot;\\&quot;);
+    wcscat(wszLogName, wszFNm);
+
+}
+
+LogFile::~LogFile()
+{
+    GlobalFree(wszAppPath);
+    GlobalFree(wszExeName);
+	GlobalFree(wszAppName);
+	
+}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> CnnLogPrnW(LPCWSTR wszFNm, LPCWSTR wszWhat, </span><span class="cpp1-reservedword">double</span><span class="cpp1-space"> xWhat)
+{
+        </span><span class="cpp1-reservedword">int</span><span class="cpp1-space">                     nOut = 0;
+        LPWSTR          wszTmp = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+
+        swprintf(wszTmp, wszWhat, xWhat);
+        </span><span class="cpp1-comment">// MessageBoxW(NULL, wsszTmp, wszWhat, MB_OK);   // TEST
+</span><span class="cpp1-space">        CxxLogPrnW(wszFNm, wszTmp);
+        GlobalFree(wszTmp);
+        </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> nOut;
+}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> CxxLogPrnW(LPCWSTR wszFNm, LPCWSTR wszWhat)
+{
+    </span><span class="cpp1-comment">// does nothing more than appending the string wszWhat at the end of the file wszFNm.....
+</span><span class="cpp1-space">    </span><span class="cpp1-reservedword">int</span><span class="cpp1-space">            	nOut = 0;
+    LPWSTR			wszLogName = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+    
+	</span><span class="cpp1-comment">// LogFile			CrLogFile(wszFNm, wszLogName);    
+</span><span class="cpp1-space">    HANDLE        	hLogFile = CreateFileW(
+                                        wszFNm,
+                                        GENERIC_READ+GENERIC_WRITE,
+                                        FILE_SHARE_DELETE+FILE_SHARE_READ+FILE_SHARE_WRITE,
+                                        NULL,
+                                        OPEN_ALWAYS,
+                                        FILE_ATTRIBUTE_NORMAL,
+                                        NULL
+                                        );
+    DWORD        dwBytesWritten = 0;
+    </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(hLogFile!=INVALID_HANDLE_VALUE)
+    {
+		SetFilePointer(hLogFile, 0, NULL, FILE_END);
+        WriteFile(
+                    hLogFile,
+                    wszWhat,
+                    wcslen(wszWhat)*2,
+                    &amp;dwBytesWritten,
+                    NULL
+                    );          </span><span class="cpp1-comment">// write what to log is...
+</span><span class="cpp1-space">		nOut = 1;
+    }
+    </span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">    {
+        </span><span class="cpp1-comment">// nOut = -3209;		// zero means error...
+</span><span class="cpp1-space">        </span><span class="cpp1-comment">// MessageBoxW(NULL, L&quot;here!!!&quot;, L&quot;&quot;, MB_OK);
+</span><span class="cpp1-space">    }
+    CloseHandle(hLogFile);
+    GlobalFree(wszLogName);
+    </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> nOut;
+
+}
+
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> TEST_CastTypes()            </span><span class="cpp1-comment">// DEACTIVATED!!!! // DEACTIVATED!!!! // DEACTIVATED!!!! // DEACTIVATED!!!!
+</span><span class="cpp1-symbol">{
+        </span><span class="cpp1-comment">/****************************************************************
+        void*                   pInv = (void*)GlobalAlloc(GPTR, sizeof(DWORD));
+        double*                 pxOut = (double*)GlobalAlloc(GPTR, sizeof(double));
+        LPWSTR                  wszTmp;
+
+        swprintf(wszTmp, L&quot;Value = %d&quot;, *static_cast&lt;double&gt;(pInv));
+        MessageBoxW(NULL, wszTmp, );
+
+        GlobalFree(pxOut);
+        GlobalFree(pInv);
+
+        ****************************************************************/
+</span><span class="cpp1-space">        </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+
+}
+
+
+</span></span>
+</code></pre>
+</body>
+</html>

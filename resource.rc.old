@@ -1,0 +1,15 @@
+
+#include "resource.h"
+
+
+
+IDB_TEX_101                BITMAP  DISCARDABLE     "TEX101.BMP"
+IDB_TEX_102                BITMAP  DISCARDABLE     "TEX102.BMP"
+IDB_TEX_103                BITMAP  DISCARDABLE     "TEX103.BMP"
+IDB_TEX_104                BITMAP  DISCARDABLE     "TEX104.BMP"
+IDB_TEX_105                BITMAP  DISCARDABLE     "TEX105.BMP"
+IDB_TEX_106                BITMAP  DISCARDABLE     "TEX106.BMP"
+IDB_TEX_107                BITMAP  DISCARDABLE     "TEX107.BMP"
+
+
+// bgv

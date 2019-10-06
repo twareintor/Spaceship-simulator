@@ -1,0 +1,2 @@
+g++.exe -c joyctrl.cpp -o joyctrl.o -I"%CppIncludeDir0%" -I"%CppIncludeDir1%" -I"%CppIncludeDir2%" -I"%CppIncludeDir2%\c++" -m32
+g++.exe main.o testogl.o logprn.o joyctrl.o -o testOgl.exe -L"%LibDir0%" -L"%LibDir1%" -static-libgcc -mwindows -lopengl32 -lglu32 -lhid -lstdc++ -m32

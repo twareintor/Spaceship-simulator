@@ -1,0 +1,79 @@
+# Project: testOgl
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = main.o testogl.o logprn.o joyctrl.o celestial_objects.o stbi.o terr01.o opengl.o loadTextures.o terrestrial_objects.o cx_camera.o cx_game_utils.o test_triangles.o file2buf.o errstr.o stdout2con.o cubemap.o rawSphere.o
+LINKOBJ  = main.o testogl.o logprn.o joyctrl.o celestial_objects.o stbi.o terr01.o opengl.o loadTextures.o terrestrial_objects.o cx_camera.o cx_game_utils.o test_triangles.o file2buf.o errstr.o stdout2con.o cubemap.o rawSphere.o
+LIBS     = -L"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/lib" -L"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -mwindows -lopengl32 -lglu32 -lhid -lstdc++
+INCS     = -I"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/include" -I"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/include" -I"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/KIT.PORT/Orwell Dev-C++ 5.11 MinGW 64/App/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = testOgl.exe
+CXXFLAGS = $(CXXINCS) -std=c++11
+CFLAGS   = $(INCS) -std=c++11
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+testogl.o: testogl.cpp
+	$(CPP) -c testogl.cpp -o testogl.o $(CXXFLAGS)
+
+logprn.o: logprn.cpp
+	$(CPP) -c logprn.cpp -o logprn.o $(CXXFLAGS)
+
+joyctrl.o: joyctrl.cpp
+	$(CPP) -c joyctrl.cpp -o joyctrl.o $(CXXFLAGS)
+
+celestial_objects.o: celestial_objects.cpp
+	$(CPP) -c celestial_objects.cpp -o celestial_objects.o $(CXXFLAGS)
+
+stbi.o: stbi.c
+	$(CPP) -c stbi.c -o stbi.o $(CXXFLAGS)
+
+terr01.o: terr01.cpp
+	$(CPP) -c terr01.cpp -o terr01.o $(CXXFLAGS)
+
+opengl.o: opengl.cpp
+	$(CPP) -c opengl.cpp -o opengl.o $(CXXFLAGS)
+
+loadTextures.o: loadTextures.cpp
+	$(CPP) -c loadTextures.cpp -o loadTextures.o $(CXXFLAGS)
+
+terrestrial_objects.o: terrestrial_objects.cpp
+	$(CPP) -c terrestrial_objects.cpp -o terrestrial_objects.o $(CXXFLAGS)
+
+cx_camera.o: cx_camera.cpp
+	$(CPP) -c cx_camera.cpp -o cx_camera.o $(CXXFLAGS)
+
+cx_game_utils.o: cx_game_utils.cpp
+	$(CPP) -c cx_game_utils.cpp -o cx_game_utils.o $(CXXFLAGS)
+
+test_triangles.o: test_triangles.cpp
+	$(CPP) -c test_triangles.cpp -o test_triangles.o $(CXXFLAGS)
+
+file2buf.o: file2buf.cpp
+	$(CPP) -c file2buf.cpp -o file2buf.o $(CXXFLAGS)
+
+errstr.o: errstr.cpp
+	$(CPP) -c errstr.cpp -o errstr.o $(CXXFLAGS)
+
+stdout2con.o: stdout2con.cpp
+	$(CPP) -c stdout2con.cpp -o stdout2con.o $(CXXFLAGS)
+
+cubemap.o: cubemap.cpp
+	$(CPP) -c cubemap.cpp -o cubemap.o $(CXXFLAGS)
+
+rawSphere.o: rawSphere.cpp
+	$(CPP) -c rawSphere.cpp -o rawSphere.o $(CXXFLAGS)

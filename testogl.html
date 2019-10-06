@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>testogl.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="SynEdit HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #FFFFFF; }
+.cpp1-assembler { color: #000000; }
+.cpp1-character { color: #000000; }
+.cpp1-comment { color: #008000; }
+.cpp1-float { color: #000000; }
+.cpp1-hexadecimal { color: #000000; }
+.cpp1-identifier { color: #000000; }
+.cpp1-illegalchar { color: #FF0000; }
+.cpp1-number { color: #000000; }
+.cpp1-octal { color: #000000; }
+.cpp1-preprocessor { color: #0000FF; }
+.cpp1-reservedword { color: #0000FF; }
+.cpp1-space { background-color: #FFFFFF; }
+.cpp1-string { color: #000000; }
+.cpp1-symbol { color: #000000; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<code><span style="font: 3pt Courier;"><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+</span><span class="cpp1-preprocessor">#include &quot;testogl.h&quot;
+#include &quot;resource.h&quot;
+
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> 	g_fAng;
+
+HBITMAP		g_hBmp[24];						</span><span class="cpp1-comment">// handles to global bitmap images...
+
+</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> XUP[3] = {1,0,0}, XUN[3] = {-1, 0, 0},
+      YUP[3] = {0,1,0}, YUN[3] = { 0,-1, 0},
+      ZUP[3] = {0,0,1}, ZUN[3] = { 0, 0,-1},
+      ORG[3] = {0,0,0};
+
+GLfloat viewangle = 0, tippangle = 0, vertangle = 0, traj[120][3];
+
+GLfloat d[3] = {0.1, 0.1, 0.1};
+GLfloat fL[] = {0.0, 0.0, 1.0, 25.0};
+GLfloat fA[] = {0.0, 0.0, 0.0};
+GLfloat fMovL = 1;
+
+GLfloat  xAngle = 0.0, yAngle = 0.0, zAngle = 0.0;
+
+GLfloat zoomF = 1.0f;
+
+GLboolean   booExit = </span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+
+</span><span class="cpp1-comment">// GLboolean   	bTest = false;
+
+// GLboolean	bLight = false;
+
+//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> SetFAng(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fAng)
+{
+	g_fAng = fAng;
+}
+
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Special_Keys(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> key, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> x, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> y)
+{
+    </span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> (key) {
+		</span><span class="cpp1-comment">/*
+       case GLUT_KEY_LEFT :     if(glutGetModifiers()==GLUT_ACTIVE_CTRL)    fA[0]-=fMovL; else  viewangle -= 5;  break;
+       case GLUT_KEY_RIGHT:     if(glutGetModifiers()==GLUT_ACTIVE_CTRL)    fA[0]+=fMovL; else  viewangle += 5;     break;
+       case GLUT_KEY_UP   :     if(glutGetModifiers()==GLUT_ACTIVE_CTRL)    fA[1]-=fMovL; else  tippangle -= 5;     break;
+       case GLUT_KEY_DOWN :     if(glutGetModifiers()==GLUT_ACTIVE_CTRL)    fA[1]+=fMovL; else  tippangle += 5;     break;
+       case GLUT_KEY_PAGE_UP:   if(glutGetModifiers()==GLUT_ACTIVE_CTRL)    fA[2]-=fMovL; else  vertangle += 5;     break;
+       case GLUT_KEY_PAGE_DOWN: if(glutGetModifiers()==GLUT_ACTIVE_CTRL)    fA[2]+=fMovL; else  vertangle -= 5;     break;
+        case GLUT_KEY_F2:       booTest = true;     break;
+        default: printf (&quot;   Special key %c == %d\n&quot;, key, key);
+        */
+</span><span class="cpp1-space">    }
+
+    </span><span class="cpp1-comment">// glutPostRedisplay();
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Keyboard (</span><span class="cpp1-reservedword">unsigned</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> key, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> x, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> y)
+{
+    </span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> (key) {
+
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'j' : d[0] += 0.1;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'k' : d[1] += 0.1;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'l' : d[2] += 0.1;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'u' : d[0] -= 0.1;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'i' : d[1] -= 0.1;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'o' : d[2] -= 0.1;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'q' : xAngle += 5;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'w' : yAngle += 5;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'e' : zAngle += 5;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'a' : xAngle -= 5;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 's' : yAngle -= 5;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+       </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'd' : zAngle -= 5;  </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'f':   zoomF+=0.025f;    </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 'r':   zoomF-=0.025f;    </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+
+        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> 27 :   exit(0);
+       </span><span class="cpp1-reservedword">default</span><span class="cpp1-symbol">: printf (&quot;   Keyboard %c == %d\n&quot;, key, key);
+    }
+
+    </span><span class="cpp1-comment">// glutPostRedisplay();
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Triad (</span><span class="cpp1-reservedword">void</span><span class="cpp1-symbol">)
+{
+    glColor3f (0.5, 0.5, 0.5);
+
+    glBegin (GL_LINES);
+       glVertex3fv (ORG); glVertex3fv (XUP);
+       glVertex3fv (ORG); glVertex3fv (YUP);
+       glVertex3fv (ORG); glVertex3fv (ZUP);
+    glEnd ();
+	glRasterPos3f (1.1, 0.0, 0.0);
+	
+	</span><span class="cpp1-comment">/***********************
+    glutBitmapCharacter (GLUT_BITMAP_HELVETICA_18, 'X');
+
+    glRasterPos3f (0.0, 1.1, 0.0);
+    glutBitmapCharacter (GLUT_BITMAP_HELVETICA_18, 'Y');
+
+    glRasterPos3f (0.0, 0.0, 1.1);
+    glutBitmapCharacter (GLUT_BITMAP_HELVETICA_18, 'Z');
+    *************************/
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Draw_Box (</span><span class="cpp1-reservedword">void</span><span class="cpp1-symbol">)
+{
+
+    glBegin (GL_QUADS);
+      glColor3f  ( 0.0,  0.7,  0.1);     </span><span class="cpp1-comment">// Front - green    // original
+</span><span class="cpp1-space">      glVertex3f (-1.0,  1.0,  1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f ( 1.0,  1.0,  1.0);
+      glColor3f  ( 0.8,  0.0,  0.0);
+      glVertex3f ( 1.0, -1.0,  1.0);
+      glColor3f  ( 0.0,  0.9,  0.0);
+      glVertex3f (-1.0, -1.0,  1.0);
+
+      glColor3f  ( 0.9,  1.0,  0.0);    </span><span class="cpp1-comment">// Back  - yellow   // original
+</span><span class="cpp1-space">      glVertex3f (-1.0,  1.0, -1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f ( 1.0,  1.0, -1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f ( 1.0, -1.0, -1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f (-1.0, -1.0, -1.0);
+
+      glColor3f  ( 0.2,  0.2,  1.0);     </span><span class="cpp1-comment">// Top - blue       // original
+</span><span class="cpp1-space">      glVertex3f (-1.0,  1.0,  1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f ( 1.0,  1.0,  1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f ( 1.0,  1.0, -1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f (-1.0,  1.0, -1.0);
+
+      glColor3f  ( 0.7,  0.0,  0.1);    </span><span class="cpp1-comment">// Bottom - red
+</span><span class="cpp1-space">      glVertex3f (-1.0, -1.0,  1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f ( 1.0, -1.0,  1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f ( 1.0, -1.0, -1.0);
+      glColor3f  ( 0.3,  0.2,  0.1);
+      glVertex3f (-1.0, -1.0, -1.0);
+
+    glEnd();
+
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Draw_Surface(</span><span class="cpp1-reservedword">void</span><span class="cpp1-symbol">)
+{
+    </span><span class="cpp1-comment">//
+</span><span class="cpp1-space">    GLfloat     vertics[]   =
+    {
+
+    };
+    GLfloat     fcolors[]   =
+    {
+
+    };
+    GLfloat     normals[]   =
+    {
+
+    };
+    GLubyte     indices[]   =
+    {
+
+    };
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, vertics);
+    glColorPointer(3, GL_FLOAT, 0, fcolors);
+    glNormalPointer(GL_FLOAT, 0, normals);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> DrawCubes(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> nRows, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> nUnits)		</span><span class="cpp1-comment">// cubes
+</span><span class="cpp1-symbol">{
+    </span><span class="cpp1-comment">//
+</span><span class="cpp1-space">    GLfloat     vertices[] =
+    {
+        -1.0, -1.0, -1.0,   +1.0, -1.0, -1.0,   +1.0, +1.0, -1.0,   -1.0, +1.0, -1.0,
+        -1.0, -1.0, +1.0,   +1.0, -1.0, +1.0,   +1.0, +1.0, +1.0,   -1.0, +1.0, +1.0,
+    };
+
+    GLfloat     fcolors[] =
+    {
+        0.2, 0.9, 0.5,      0.9, 0.2, 0.9,      0.0, 0.8, 0.4,      0.5, 0.2, 0.0,
+        0.8, 0.4, 0.1,      0.1, 0.0, 0.4,      0.0, 0.2, 0.3,      0.0, 0.8, 0.5
+    };
+    GLfloat     fcolors2[] =
+    {
+        0.5, 0.5, 0.5,      0.5, 0.5, 0.5,      0.5, 0.5, 0.5,      0.5, 0.5, 0.5,
+        0.5, 0.5, 0.5,      0.5, 0.5, 0.5,      0.5, 0.5, 0.5,      0.5, 0.5, 0.5
+    };
+    GLfloat     fcolors3[] =
+    {
+        0.1, 0.5, 0,1,      0.1, 0.5, 0,1,      0.1, 0.5, 0,1,      0.1, 0.5, 0,1,
+        0.1, 0.5, 0,1,      0.1, 0.5, 0,1,      0.1, 0.5, 0,1,      0.1, 0.5, 0,1
+    };
+    GLubyte     indices[] =
+    {
+        0, 1, 2,    2, 3, 0,
+        0, 3, 4,    4, 7, 3,
+        0, 1, 4,    1, 5, 4,
+        1, 2, 5,    5, 6, 2,
+        2, 3, 7,    7, 6, 2,
+        4, 5, 6,    6, 7, 4
+    };
+    GLubyte		indicet[] = 
+	{
+        0, 1, 2,    2, 3, 0,
+        
+        0, 1, 4,    1, 5, 4,
+        
+        2, 3, 7,    7, 6, 2,
+        4, 5, 6,    6, 7, 4
+	};
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+	</span><span class="cpp1-comment">// drawing blocks:
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> j=0; j&lt;nRows	</span><span class="cpp1-comment">/*RANDURI*/</span><span class="cpp1-symbol">; j++)		</span><span class="cpp1-comment">// how many rows in the scene ...
+</span><span class="cpp1-space">	{
+	    </span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=0; i&lt;nUnits	</span><span class="cpp1-comment">/*CUBURI*/</span><span class="cpp1-symbol">; i++)			</span><span class="cpp1-comment">// howm many elements in a row ...
+</span><span class="cpp1-space">	    {
+	    	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> k=0; k&lt;=23; k+=3)
+			{
+				vertices[k+0]+=3;		</span><span class="cpp1-comment">// modify just the x;
+</span><span class="cpp1-space">			}
+			</span><span class="cpp1-comment">// then draw:
+</span><span class="cpp1-space">		    glVertexPointer(3, GL_FLOAT, 0, vertices);
+		    glColorPointer(3, GL_FLOAT, 0, fcolors3);
+		    </span><span class="cpp1-comment">// glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+</span><span class="cpp1-space">		    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
+	    }
+		</span><span class="cpp1-comment">// then modify the y's:
+</span><span class="cpp1-space">	    </span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> k=0; k&lt;=23; k+=3)	
+	    {
+	    	vertices[k+1]+=3;		</span><span class="cpp1-comment">// modify just the y;
+</span><span class="cpp1-space">	    }
+	}
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+  
+    </span><span class="cpp1-comment">//
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> StreetLights(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> nPairs, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fDist)			</span><span class="cpp1-comment">// lighting spheres imitating street lights
+</span><span class="cpp1-symbol">{
+    </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fTest = 3.5092;			</span><span class="cpp1-comment">// MODIFY THIS VALUE BEFORE EVERY DEBUG/ RUN/ COMPILATION
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fLight[] = {+0.0, +0.3, +0.0, +1.0};
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fColor[] = {+1.0, +1.0, +0.4, +1.0};
+    
+    glEnable(GL_LIGHTING);		</span><span class="cpp1-comment">// GL_EMISSION		// GL_LIGHTING
+</span><span class="cpp1-space">	glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, fColor);
+	</span><span class="cpp1-comment">// drawing sphere:
+</span><span class="cpp1-space">	glPushMatrix();
+	glTranslatef(2.0, -2.0, 4.0);
+	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i = 0; i&lt;=nPairs; i++)			</span><span class="cpp1-comment">// Pairs of L+R street lights 
+</span><span class="cpp1-space">	{
+		glTranslatef(fDist, 0.0, 0.0);			</span><span class="cpp1-comment">// Distance between lights
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> j=0; j&lt;=1; j++)
+		{
+			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(j==0){glTranslatef(0.0, +4.0, 0.0);}</span><span class="cpp1-reservedword">else</span><span class="cpp1-symbol">{glTranslatef(0.0, -4.0, 0.0);}
+			GLUquadric* pqdrs01;
+		    pqdrs01 = gluNewQuadric();		</span><span class="cpp1-comment">// a quadric required 
+</span><span class="cpp1-space">		    </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pqdrs01)
+		    {
+		    	gluQuadricNormals(pqdrs01, GLU_SMOOTH);
+				</span><span class="cpp1-comment">// gluQuadricTexture(pqdrs01, GL_TRUE);
+</span><span class="cpp1-space">				</span><span class="cpp1-comment">// gluQuadricDrawStyle(pqdrs01, GLU_SILHOUETTE);
+</span><span class="cpp1-space">		    	gluSphere(pqdrs01, 0.2f, 10, 10);
+				
+		    }
+		    </span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">			{
+				</span><span class="cpp1-comment">// MessageBoxW(NULL, L&quot;no shpere!&quot;, L&quot;&quot;, MB_OK);
+</span><span class="cpp1-space">			}
+		    gluDeleteQuadric(pqdrs01);
+		}
+	}
+	glPopMatrix();
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> ExampleX()
+{		</span><span class="cpp1-comment">// thanks to Rachel Grey from &quot;cityontherain.com&quot; for this piece of code 
+</span><span class="cpp1-space">       </span><span class="cpp1-comment">//enable textures
+
+</span><span class="cpp1-space">        glEnable(GL_TEXTURE_2D);
+        LoadBitmapTexture(6);
+
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+        </span><span class="cpp1-comment">//use GL_MODULATE instead of GL_REPLACE if lighting is being used
+
+</span><span class="cpp1-space">        </span><span class="cpp1-comment">//draw a square with specified texture coordinates
+
+</span><span class="cpp1-space">        </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> xvals[] = {00.0, 00.0, 40.0, 40.0};
+        </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> yvals[] = {40.0, 00.0, 00.0, 40.0};
+
+        </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> svals[] = {1, 0, 0, 1};
+        </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> tvals[] = {0, 0, 1, 1};
+
+        glPolygonMode(GL_FRONT, GL_POLYGON);
+        glBegin(GL_POLYGON);
+	        </span><span class="cpp1-reservedword">for</span><span class="cpp1-space"> (</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=0; i &lt; 4; i++)
+	        {
+                glVertex2f(xvals[i], yvals[i]);
+                glTexCoord2f(svals[i], tvals[i]);
+	        }
+        glEnd();	
+        glDisable(GL_TEXTURE_2D);
+}
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> AWall()
+{
+	</span><span class="cpp1-comment">//////////////////////////////////////////////////////////////////
+</span><span class="cpp1-space">    glEnableClientState( GL_VERTEX_ARRAY );        </span><span class="cpp1-comment">// Enable Vertex Arrays
+</span><span class="cpp1-space"> 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );   	</span><span class="cpp1-comment">// Enable Texture Coord Arrays
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fLight[] = {-3.0, -4.0, +0.0, +1.0};
+ 	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> vertices[] = { 		
+	 					+1.0f, +0.0f, -1.0f,  	</span><span class="cpp1-comment">//0 index
+</span><span class="cpp1-space">						+1.0f, +0.0f, +1.0f, 	</span><span class="cpp1-comment">//1
+</span><span class="cpp1-space">						-1.0f, +0.0f, +1.0f, 	</span><span class="cpp1-comment">//2
+</span><span class="cpp1-space">						-1.0f, +0.0f, -1.0f, 	</span><span class="cpp1-comment">//3
+</span><span class="cpp1-space">						+1.0f, +1.0f, -1.0f, 	</span><span class="cpp1-comment">//4
+</span><span class="cpp1-space">						+1.0f, +1.0f, +1.0f, 	</span><span class="cpp1-comment">//5
+</span><span class="cpp1-space">						-1.0f, +1.0f, +1.0f, 	</span><span class="cpp1-comment">//6
+</span><span class="cpp1-space">						-1.0f, +1.0f, -1.0f 	</span><span class="cpp1-comment">//7
+</span><span class="cpp1-space">	};
+	</span><span class="cpp1-reservedword">short</span><span class="cpp1-space"> indices[] = { 0, 1, 2, 0, 2, 3,
+                		0, 4, 5, 0, 5, 1};
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> texture[] = { 0, 0,	0, 2,	2, 2,	2, 0,	</span><span class="cpp1-comment">//... I repeat these 4 coordinate 2 times
+</span><span class="cpp1-space">						0, 0,	0, 2,	2, 2,	2, 0};
+	
+	glEnable(GL_TEXTURE_2D);		</span><span class="cpp1-comment">// ... forgotten!!!						
+</span><span class="cpp1-space">	
+	LoadBitmapTexture(7);
+	
+	glVertexPointer( 3, GL_FLOAT, 0, vertices ); 					</span><span class="cpp1-comment">// Set The Vertex Pointer To Our Vertex Data
+</span><span class="cpp1-space">	glTexCoordPointer( 2, GL_FLOAT, 0, texture ); 					</span><span class="cpp1-comment">// Set The Vertex Pointer To Our TexCoord Data
+</span><span class="cpp1-space">	glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, indices);	</span><span class="cpp1-comment">// Draw the wall	
+</span><span class="cpp1-space">    glDisableClientState( GL_VERTEX_ARRAY );        				</span><span class="cpp1-comment">// Enable Vertex Arrays
+</span><span class="cpp1-space"> 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );   				</span><span class="cpp1-comment">// Enable Texture Coord Arrays
+
+</span><span class="cpp1-space">	glLightfv(GL_LIGHT0, GL_DIFFUSE, fLight);		</span><span class="cpp1-comment">// GL_DIFFUSE		// BUG!! doesnot work
+</span><span class="cpp1-space">	
+	glDisable(GL_TEXTURE_2D);
+	</span><span class="cpp1-comment">/////////////////////////////////////////////////////////////////////////////////////////////////	
+</span><span class="cpp1-symbol">}
+
+
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TheHall()
+{
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fTest = 0.000;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fVerts[] = {
+		+00.00, -01.00, +00.00,		+00.00, +01.00, +00.00,		+04.00, -01.00, +00.00,		+04.00, +01.00, +00.00,
+		+00.00, -01.00, +03.00,		+00.00, +01.00, +03.00,		+04.00, -01.00, +03.00,		+04.00, +01.00, +03.00,		
+	};
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fColor[] = {
+		+00.20, +00.30, +30.00,		+00.20, +00.20, +30.00,		+00.20, +00.10, +00.00,		+00.20, +00.40, +00.40,
+		+00.20, +00.90, +30.00,		+00.30, +00.40, +30.00,		+00.30, +00.00, +00.50,		+00.20, +00.10, +00.00,
+	};
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fCoords[] = {
+		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+	};
+	BYTE 	fIndex[] = {
+		0, 1, 2,	2, 3, 1,		0, 2, 4, 	4, 6, 2,		4, 5, 6,	6, 7, 5,		1, 5, 3,	3, 7, 5
+	};
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	
+	glPushMatrix();
+	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=0; i&lt;=80; i++)
+	{
+		glVertexPointer(3, GL_FLOAT, 0, fVerts);
+	    </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(i==0&amp;&amp;</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">)
+	    {
+			</span><span class="cpp1-comment">/////////////////////////////////////////////
+</span><span class="cpp1-space">			glEnableClientState(GL_TEXTURE_COORD_ARRAY);	    
+
+			glTexCoordPointer(2, GL_FLOAT, 0, fCoords);
+			
+		    LoadBitmapTexture(6);
+		    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			</span><span class="cpp1-comment">/////////////////////////////////////////////
+
+</span><span class="cpp1-space">	    }
+	    </span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">	    {
+			glColorPointer(3, GL_FLOAT, 0, fColor);	    	
+	    }
+		glDrawElements(GL_TRIANGLES, 32, GL_UNSIGNED_BYTE, fIndex);
+		</span><span class="cpp1-comment">// MessageBoxW(NULL, L&quot;here I am!!&quot;, L&quot;DEBUG#1004&quot;, MB_OK);		
+</span><span class="cpp1-space">		glTranslatef(4.0, 0.0, 0.0);
+		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(i==0&amp;&amp;</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">)
+		{
+			</span><span class="cpp1-comment">/////////////////////////////////////////////
+</span><span class="cpp1-space">			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			</span><span class="cpp1-comment">/////////////////////////////////////////////
+</span><span class="cpp1-space">		}
+	}
+	glPopMatrix();
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> NewHall()
+{
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space">	fVerts[] = {
+		+00.00, -01.00, +00.00,		+00.00, +01.00, +00.00,		+04.00, -01.00, +00.00,		+04.00, +01.00, +00.00,
+		+00.00, -01.00, +03.00,		+00.00, +01.00, +03.00,		+04.00, -01.00, +03.00,		+04.00, +01.00, +03.00,		
+	};
+
+    glEnable(GL_TEXTURE_2D);
+    LoadBitmapTexture(6);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    </span><span class="cpp1-comment">//use GL_MODULATE instead of GL_REPLACE if lighting is being used
+
+</span><span class="cpp1-space">    </span><span class="cpp1-comment">//draw a square with specified texture coordinates
+
+</span><span class="cpp1-space">    </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> xvals[] = {0.0, 0.0, 40.0, 40.0};
+    </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> yvals[] = {40.0, 0.0, 0.0, 40.0};
+
+    </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> svals[] = {0, 0, 1, 1};
+    </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> tvals[] = {1, 0, 0, 1};
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_POLYGON);
+    glBegin(GL_POLYGON);
+            </span><span class="cpp1-reservedword">for</span><span class="cpp1-space"> (</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=0; i &lt; 4; i++)
+            {
+                    glVertex2f(xvals[i], yvals[i]);
+                    glTexCoord2f(svals[i], tvals[i]);
+            }
+    glEnd();	
+    glDisable(GL_TEXTURE_2D);
+	
+	glPushMatrix();
+	
+	glPopMatrix();
+	
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Scari(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> nTrepte)			</span><span class="cpp1-comment">// deseneaza scari
+</span><span class="cpp1-symbol">{
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> 	fVerts[] = {
+		0.0, -1.0, 0.0, 	0.0, +1.0, 0.0,		
+		0.2, -1.0, 0.0,		0.2, +1.0, 0.0, 	
+		0,2, -1.0, 0.2, 	0.2, +1.0, 0.2
+	};
+	
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> 	fColor[] = {
+		0.1, 0.8, 0.2, 		0.3, 0.5, 0.4, 	
+		0.4, 0.7, 0.5,		0.8, 0.3, 0.1, 	
+		0.5, 0.4, 0.8, 		0.9, 0.0, 0.8
+	};
+	
+	BYTE	fIndex[] = {
+		0, 1, 2, 	1, 2, 3, 
+		2, 3, 4,	3, 4, 5
+	};
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);	
+	glPushMatrix();
+	glTranslatef(81*4, 0, 0);
+	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=1; i&lt;=nTrepte; i++)
+	{
+		glVertexPointer(3, GL_FLOAT, 0, fVerts);
+		glColorPointer(3, GL_FLOAT, 0, fColor);
+		glDrawElements(GL_TRIANGLES, 8, GL_UNSIGNED_BYTE, fIndex);
+		glTranslatef(0.2, 0.0, 0.2);
+	}
+	glPopMatrix();
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+	
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Punte()		</span><span class="cpp1-comment">// deseneaza puntea	// draw the deck
+</span><span class="cpp1-symbol">{
+	glPushMatrix();
+	
+	glTranslatef(81*4+0.2*15, 0, 0.2*15);
+	ExampleX();
+	glPopMatrix();
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> CeilLightsOnHall()
+{
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fLight[] = {+0.0, +0.0, -4.0, +1.0};
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fColor[] = {+1.0, +0.9, +0.0, +1.0};
+	
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, fColor);
+
+	glPushMatrix();
+	glTranslatef(2.0, 0.0, 3.0);
+	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i = 0; i&lt;=80; i++)
+	{
+		GLUquadric*	pqdrLamp = gluNewQuadric();		</span><span class="cpp1-comment">// a quadric required
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pqdrLamp)
+		{
+			gluQuadricNormals(pqdrLamp, GLU_SMOOTH);
+			gluSphere(pqdrLamp, 0.2, 8, 8);
+		}
+		glTranslatef(4.0, 0.0, 0.0);
+	}
+	glPopMatrix();
+	
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> RestrictCamOnTheHall(cxCam* pCam)
+{			</span><span class="cpp1-comment">// temporary solution 
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((pCam-&gt;x&gt;0.0)&amp;&amp;(pCam-&gt;x&lt;81*4))
+	{
+		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pCam-&gt;y&lt;-0.7){pCam-&gt;y=-0.68; </span><span class="cpp1-reservedword">return</span><span class="cpp1-symbol">;}	
+		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pCam-&gt;y&gt;+0.7){pCam-&gt;y=+0.68; </span><span class="cpp1-reservedword">return</span><span class="cpp1-symbol">;}	
+		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pCam-&gt;z&lt;+0.3){pCam-&gt;z=+0.32; </span><span class="cpp1-reservedword">return</span><span class="cpp1-symbol">;}		
+		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pCam-&gt;z&gt;+2.7){pCam-&gt;z=+2.68; </span><span class="cpp1-reservedword">return</span><span class="cpp1-symbol">;}		
+	}
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TestBitmap(HDC hdc)
+{	</span><span class="cpp1-comment">// does not work!!!!!!!!
+</span><span class="cpp1-space">	
+	LPWSTR			wszMsg = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+	
+	HDC				hdcB = CreateCompatibleDC(hdc);
+	HWND			hwnd = WindowFromDC(hdc);
+	</span><span class="cpp1-comment">// HBITMAP 		hbm = (HBITMAP)LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_TEX_101));
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// HBITMAP 		hbm = (HBITMAP)LoadImage(NULL, MAKEINTRESOURCE(IDB_TEX_101), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE);
+</span><span class="cpp1-space">	HBITMAP			hbm = (HBITMAP)LoadImage(NULL, &quot;TEX101.BMP&quot;, IMAGE_BITMAP, 128, 128, LR_LOADFROMFILE);
+	BITMAP			bm;
+	HBITMAP 		hbmOld;
+	PAINTSTRUCT		ps;
+	LPRECT			lprcCli = (LPRECT)GlobalAlloc(GPTR, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(RECT));	
+
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(hbm==NULL)
+	{
+		MessageBoxW(NULL, wszMsg, L&quot;bitmap not loaded!!!&quot;, 0);
+	}
+	GetObject(hbm, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(bm), &amp;bm);
+	GetClientRect(hwnd, lprcCli);
+	BeginPaint(hwnd, &amp;ps);
+	hbmOld = (HBITMAP)SelectObject(hdcB, hbm);
+	BitBlt(hdc, lprcCli-&gt;left, lprcCli-&gt;top, lprcCli-&gt;left+bm.bmWidth, lprcCli-&gt;top+bm.bmHeight, hdcB, 0, 0, SRCPAINT);
+
+	SelectObject(hdcB, hbmOld);
+	</span><span class="cpp1-comment">// DeleteObject(hbmOld);
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// DeleteObject(hbm);
+</span><span class="cpp1-space">	EndPaint(hwnd, &amp;ps);
+	GlobalFree(lprcCli);
+	CloseHandle(hbmOld);
+	CloseHandle(hbm);
+	CloseHandle(hwnd);
+	
+	GlobalFree(wszMsg);
+}
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TestTexture()
+{	</span><span class="cpp1-comment">// texture:
+</span><span class="cpp1-space">    glEnable(GL_TEXTURE_2D);
+    </span><span class="cpp1-comment">// SetTextureFilter(TF_NONE);
+</span><span class="cpp1-space">    LoadBitmapTexture(6);
+    
+    </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> oneFortieth = 1.0/40.0;
+
+    </span><span class="cpp1-comment">//define how the s parameter depends on x, y, z, w
+</span><span class="cpp1-space">    GLfloat myparamsS[] = {oneFortieth, 0.00, 0.00, 1.0};
+
+    </span><span class="cpp1-comment">//define how the t parameter depends on x, y, z, w
+</span><span class="cpp1-space">    GLfloat myparamsT[] = {0.00, oneFortieth, 0.00, 1.0};
+    
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGenfv(GL_S, GL_OBJECT_PLANE, myparamsS);
+    
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGenfv(GL_T, GL_OBJECT_PLANE, myparamsT);
+
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_GEN_T);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    </span><span class="cpp1-comment">//use GL_MODULATE instead of GL_REPLACE if lighting is being used
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-comment">// ~texture
+</span><span class="cpp1-space">	
+}
+
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Redraw(HDC hdc, BOOL bLight, CxCam* pCam)
+{
+	</span><span class="cpp1-comment">// main function that draws all
+</span><span class="cpp1-space">    glClear  (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable (GL_DEPTH_TEST);
+    glEnable(GL_POLYGON_SMOOTH);
+    glLoadIdentity();
+	gluLookAt(pCam-&gt;x, pCam-&gt;y, pCam-&gt;z, pCam-&gt;x0, pCam-&gt;y0, pCam-&gt;z0, pCam-&gt;xv, pCam-&gt;yv, pCam-&gt;zv);
+	</span><span class="cpp1-comment">// Drawing objects:
+</span><span class="cpp1-space">    </span><span class="cpp1-comment">// Triad ();
+</span><span class="cpp1-space">	DrawCubes(1, 240);			</span><span class="cpp1-comment">// cubes		// CUBURI&gt; Rows, Units
+</span><span class="cpp1-space">	StreetLights(60, 8.0);		</span><span class="cpp1-comment">// lighting spheres // pairs, distance between
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// TheHall();				
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// CeilLightsOnHall();		
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// RestrictCamOnTheHall(pCam);
+</span><span class="cpp1-space">	Scari(15);
+	Punte();
+	</span><span class="cpp1-comment">// ExampleX();
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// AWall();
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// TheSky(pCam);
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// TheSun(pCam);				// shows the sun on the sky// long distance simulated by moving with the camera..
+</span><span class="cpp1-space">    </span><span class="cpp1-comment">// TheEarth(pCam);				// shows the earth, relative to position of the cam, simulating a very long distance...
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// ~ End of Drawing objects
+</span><span class="cpp1-space">	SwapBuffers(hdc);
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Initializations(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fFovy, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fWidth, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fHeight)
+{
+    glClearColor (0.1, 0.0, 0.1, 0.0);			</span><span class="cpp1-comment">// in space
+</span><span class="cpp1-space">    glMatrixMode   (GL_PROJECTION);
+    gluPerspective (45.0, 16.0/9.0, 0.1, 10120.0);
+    glMatrixMode   (GL_MODELVIEW);
+    </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(CxxLogPrnW(L&quot;c:\\tnc\\testogllog.txt&quot;, L&quot;Application Initialized&quot;)==0)
+    {
+    	MessageBoxW(NULL, L&quot;Log file error&quot;, L&quot;&quot;, MB_OK);
+    }
+    </span><span class="cpp1-reservedword">for</span><span class="cpp1-space"> (</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=0; i&lt;=23; i++)
+    	g_hBmp[i] = NULL;
+}
+
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> LoadBitmapTexture(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> id) 
+{       </span><span class="cpp1-comment">// from &quot;http://cityintherain.com/howtotex.html&quot;		// thanks to Rachel Grey
+</span><span class="cpp1-space">		
+		HDC		hdcY = CreateCompatibleDC(NULL);
+		HBITMAP hBmp = NULL;
+        LPWSTR		wszTexImg = (LPWSTR)GlobalAlloc(GPTR, 0x60);		</span><span class="cpp1-comment">// for the image...
+</span><span class="cpp1-space">		
+		swprintf(wszTexImg, L&quot;TEX1%02d.BMP&quot;, id);
+		</span><span class="cpp1-comment">// hBmp = (HBITMAP)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(id), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+</span><span class="cpp1-space">		</span><span class="cpp1-comment">// hBmp = (HBITMAP)LoadImageW(GetModuleHandle(NULL), MAKEINTRESOURCEW(id), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
+</span><span class="cpp1-space">		hBmp = (HBITMAP)LoadImageW(GetModuleHandle(NULL), wszTexImg, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+		</span><span class="cpp1-comment">// hBmp = (HBITMAP)LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(id));
+</span><span class="cpp1-space">		GlobalFree(wszTexImg);
+        </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(hBmp==INVALID_HANDLE_VALUE)
+			MessageBoxW(NULL, L&quot;Texture bitmap image not loaded&quot;, L&quot;&quot;, MB_OK);
+		</span><span class="cpp1-comment">//get info about the bitmap
+</span><span class="cpp1-space">        BITMAP 				bm;
+        BITMAPINFO 			bi;
+        
+		GetObject(hBmp, </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(bm), &amp;bm);
+		LPBYTE			lpbytImg = (LPBYTE)GlobalAlloc(GPTR, bm.bmWidth*bm.bmHeight*3);
+
+	    bi.bmiHeader.biSize = </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(BITMAPINFOHEADER);
+	    bi.bmiHeader.biWidth = bm.bmWidth;
+	    bi.bmiHeader.biHeight = bm.bmHeight;
+	    bi.bmiHeader.biPlanes = 1;
+	    bi.bmiHeader.biBitCount = 24;
+	    bi.bmiHeader.biCompression = BI_RGB;        
+	    bi.bmiHeader.biSizeImage = 0;        
+
+		GetDIBits(hdcY, hBmp, 0, bm.bmHeight, lpbytImg, &amp;bi, DIB_RGB_COLORS);
+
+        </span><span class="cpp1-comment">//tell OpenGL to ignore padding at ends of rows
+</span><span class="cpp1-space">        </span><span class="cpp1-comment">// glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+</span><span class="cpp1-space">        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	    </span><span class="cpp1-comment">// glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+</span><span class="cpp1-space">	    </span><span class="cpp1-comment">// glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+</span><span class="cpp1-space">		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        </span><span class="cpp1-comment">// glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+</span><span class="cpp1-space">		
+        glTexImage2D(GL_TEXTURE_2D, 0, 3, bm.bmWidth, bm.bmHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, lpbytImg);
+		</span><span class="cpp1-comment">// LPWSTR		wszMsg = (LPWSTR)GlobalAlloc(GPTR, 0x100);
+</span><span class="cpp1-space">		</span><span class="cpp1-comment">// swprintf(wszMsg, L&quot;%dx%d&quot;, BM.bmWidth, BM.bmHeight);
+</span><span class="cpp1-space">		</span><span class="cpp1-comment">// MessageBoxW(NULL, wszMsg, L&quot;&quot;, MB_OK);
+</span><span class="cpp1-space">	
+		</span><span class="cpp1-comment">// GlobalFree(wszMsg);
+</span><span class="cpp1-space">		GlobalFree(lpbytImg);
+        DeleteObject((HGDIOBJ) hBmp);  </span><span class="cpp1-comment">//avoid memory leak (Windows)
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> MoveIt(cxCam* pCam, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fds)
+{	</span><span class="cpp1-comment">// moves the camera forward (or backward, if fdx is negative) its direction
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">/**************************************************************	
+	LPWSTR			wszMsg = (LPWSTR)GlobalAlloc(GPTR, 0xff);
+	swprintf(wszMsg, L&quot;x=%g, x0=%g, y=%g, y0=%g&quot;, pCam-&gt;x, pCam-&gt;x0, pCam-&gt;y, pCam-&gt;y0);
+	MessageBoxW(NULL, wszMsg, L&quot;&quot;, MB_OK);
+	swprintf(wszMsg, L&quot;R=%g, Rp=%g, ffi=%g, fth=%g&quot;, R, Rp, ffi, fth);
+	MessageBoxW(NULL, wszMsg, L&quot;&quot;, MB_OK);
+	**************************************************************/
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> R = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)sqrt((pCam-&gt;x0-pCam-&gt;x)*(pCam-&gt;x0-pCam-&gt;x)+(pCam-&gt;x0-pCam-&gt;x)*(pCam-&gt;x0-pCam-&gt;x)+(pCam-&gt;x0-pCam-&gt;x)*(pCam-&gt;x0-pCam-&gt;x));					
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> x = (pCam-&gt;x0-pCam-&gt;x)/R;			</span><span class="cpp1-comment">// the calculated components of the orientation vector
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> y = (pCam-&gt;y0-pCam-&gt;y)/R;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> z = (pCam-&gt;z0-pCam-&gt;z)/R;
+	pCam-&gt;x+=fds*x;		</span><span class="cpp1-comment">// increment with the x-component of &quot;fds&quot;
+</span><span class="cpp1-space">	pCam-&gt;y+=fds*y;		</span><span class="cpp1-comment">// increment with the y-component of &quot;fds&quot;
+</span><span class="cpp1-space">	pCam-&gt;z+=fds*z;		</span><span class="cpp1-comment">// increment with the z-component of &quot;fds&quot;
+</span><span class="cpp1-space">	pCam-&gt;x0+=fds*x;	</span><span class="cpp1-comment">// increment with the x-component of &quot;fds&quot;
+</span><span class="cpp1-space">	pCam-&gt;y0+=fds*y;	</span><span class="cpp1-comment">// increment with the y-component of &quot;fds&quot;
+</span><span class="cpp1-space">	pCam-&gt;z0+=fds*z;	</span><span class="cpp1-comment">// increment with the z-component of &quot;fds&quot;
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;		</span><span class="cpp1-comment">// return success	
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> TurnIt(cxCam* pCam, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdt, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdf, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdh)
+{
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> R = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)sqrt((pCam-&gt;x0-pCam-&gt;x)*(pCam-&gt;x0-pCam-&gt;x)+(pCam-&gt;y0-pCam-&gt;y)*(pCam-&gt;y0-pCam-&gt;y)+(pCam-&gt;z0-pCam-&gt;z)*(pCam-&gt;z0-pCam-&gt;z));
+	</span><span class="cpp1-comment">// use the components of the normal vector: fdt (delta-theta) rotates about this vector
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// guess the components of the orientation vector:
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> x = (pCam-&gt;x0-pCam-&gt;x)/R;			</span><span class="cpp1-comment">// the calculated components of the orientation vector
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> y = (pCam-&gt;y0-pCam-&gt;y)/R;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> z = (pCam-&gt;z0-pCam-&gt;z)/R;
+	</span><span class="cpp1-comment">// guess the components of the normal vector (in fact, they are stored in the pCam structure)
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> u = pCam-&gt;xv;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> v = pCam-&gt;yv;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> w = pCam-&gt;zv;
+	</span><span class="cpp1-comment">// guess the components of the yawn vector: // in fact, the rotation with 90 degrees of the normal vector about the direction vector	
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> r = x*(x*u+y*v+z*w)+u;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> s = y*(x*u+y*v+z*w)+v;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> t = z*(x*u+y*v+z*w)+w;
+	</span><span class="cpp1-comment">// first pitch the camera (turn it about the normal vector)
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> xt = u*(u*x+v*y+w*z)*(1-cos(fdt))+x*cos(fdt)+(-w*y+v*z)*sin(fdt);
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> yt = v*(u*x+v*y+w*z)*(1-cos(fdt))+y*cos(fdt)+(+w*x-u*z)*sin(fdt);
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> zt = w*(u*x+v*y+w*z)*(1-cos(fdt))+z*cos(fdt)+(-v*x+u*y)*sin(fdt);
+	x = xt; 
+	y = yt, 
+	z = zt;
+	pCam-&gt;x0 = pCam-&gt;x+R*x;
+	pCam-&gt;y0 = pCam-&gt;y+R*y;
+	pCam-&gt;z0 = pCam-&gt;z+R*z;
+	</span><span class="cpp1-comment">// guess the components of the rotated accordingly yaw vector:
+</span><span class="cpp1-space">	r = xt*(xt*u+yt*v+zt*w)+u;
+	s = yt*(xt*u+yt*v+zt*w)+v;
+	t = zt*(xt*u+yt*v+zt*w)+w;
+	</span><span class="cpp1-comment">// rotate (elevate) now the orientation and the normal vector about the yaw vector:
+</span><span class="cpp1-space">	x = (pCam-&gt;x0-pCam-&gt;x)/R;			</span><span class="cpp1-comment">// the calculated components of the orientation vector
+</span><span class="cpp1-space">	y = (pCam-&gt;y0-pCam-&gt;y)/R;
+	z = (pCam-&gt;z0-pCam-&gt;z)/R;
+	xt = r*(r*x+s*y+t*z)*(1-cos(fdf))+x*cos(fdf)+(-w*y+v*z)*sin(fdf);
+	yt = s*(r*x+s*y+t*z)*(1-cos(fdf))+y*cos(fdf)+(+w*x-u*z)*sin(fdf);
+	zt = t*(r*x+s*y+t*z)*(1-cos(fdf))+z*cos(fdf)+(-v*x+u*y)*sin(fdf);
+	x = xt;
+	y = yt;
+	z = zt;
+	pCam-&gt;x0 = pCam-&gt;x+R*x;
+	pCam-&gt;y0 = pCam-&gt;y+R*y;
+	pCam-&gt;z0 = pCam-&gt;z+R*z;
+	
+	
+	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;		</span><span class="cpp1-comment">// return success
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> RotateVector(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> u, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> v, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> w, </span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">* x, </span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">* y, </span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">* z)
+{
+	
+	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> RotateIt(cxCam* pCam, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdt, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdf)		</span><span class="cpp1-comment">// will be replaced!!!
+</span><span class="cpp1-symbol">{	</span><span class="cpp1-comment">// this rotates the camera (only) around the point of view (around the camera position)
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// pCam does not need theta and phi that can be deduced from the other. 
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Rotation about the origin of the normal veg
+</span><span class="cpp1-space">	
+	pCam-&gt;th+=fdt;		</span><span class="cpp1-comment">// increment with delta-theta
+</span><span class="cpp1-space">	pCam-&gt;fi+=fdf;		</span><span class="cpp1-comment">// increment with delta-phi	
+</span><span class="cpp1-space">	
+	pCam-&gt;xv = cos(PI+pCam-&gt;th)*sin(pCam-&gt;fi);
+	pCam-&gt;yv = sin(PI+pCam-&gt;th)*sin(pCam-&gt;fi);
+	pCam-&gt;zv = cos(pCam-&gt;fi);
+	</span><span class="cpp1-comment">// pCam-&gt;zv = 1+(-2)*(cos(pCam-&gt;fi)&lt;0);		// reset the normal vector von upsidedown to downside up, when the camera turns overhead
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// if(abs(pCam-&gt;fi)&gt;89*DEG)	pCam-&gt;fi-=fdf;		// limit the vertical elevation to +/- 90 degrees
+</span><span class="cpp1-space"> 
+	pCam-&gt;x0 = pCam-&gt;x+pCam-&gt;R*cos(pCam-&gt;th)*cos(pCam-&gt;fi);
+	pCam-&gt;y0 = pCam-&gt;y+pCam-&gt;R*sin(pCam-&gt;th)*cos(pCam-&gt;fi);
+	pCam-&gt;z0 = pCam-&gt;z+pCam-&gt;R*sin(pCam-&gt;fi);
+	
+	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> PrintCoords(cxCam* pCam, HDC hdc)
+{	
+	LPWSTR			wszMsg = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> R = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)sqrt((pCam-&gt;x0-pCam-&gt;x)*(pCam-&gt;x0-pCam-&gt;x)+(pCam-&gt;y0-pCam-&gt;y)*(pCam-&gt;y0-pCam-&gt;y)+(pCam-&gt;z0-pCam-&gt;z)*(pCam-&gt;z0-pCam-&gt;z));
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fi = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)asin(pCam-&gt;z0-pCam-&gt;z)/R;
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Rp = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)sqrt((pCam-&gt;x0-pCam-&gt;x)*(pCam-&gt;x0-pCam-&gt;x)+(pCam-&gt;y0-pCam-&gt;y)*(pCam-&gt;y0-pCam-&gt;y));
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> th = (</span><span class="cpp1-reservedword">float</span><span class="cpp1-symbol">)acos(pCam-&gt;x0-pCam-&gt;x)/Rp;
+	swprintf(wszMsg, L&quot; x: %+08.3f    x0: %+08.3f&quot;, pCam-&gt;x, pCam-&gt;x0);
+	TextOutW(hdc, 4, 28, wszMsg, wcslen(wszMsg));
+	swprintf(wszMsg, L&quot; y: %+08.3f    y0: %+08.3f&quot;, pCam-&gt;y, pCam-&gt;y0);
+	TextOutW(hdc, 4, 40, wszMsg, wcslen(wszMsg));
+	swprintf(wszMsg, L&quot; z: %+08.3f    z0: %+08.3f&quot;, pCam-&gt;z, pCam-&gt;z0);
+	TextOutW(hdc, 4, 52, wszMsg, wcslen(wszMsg));
+	</span><span class="cpp1-comment">// swprintf(wszMsg, L&quot; cos(phi):          %+08.3f&quot;, cos(pCam-&gt;fi));
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// TextOutW(hdc, 4, 64, wszMsg, wcslen(wszMsg));
+
+</span><span class="cpp1-space">	swprintf(wszMsg, L&quot; th: %+08.3f    fi=%+08.3f    R : %+08.3f    Rp: %+08.3f&quot;, th, fi, R, Rp);
+	TextOutW(hdc, 4, 04, wszMsg, wcslen(wszMsg));
+	GlobalFree(wszMsg);
+	
+	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;		
+}
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> PrintParams(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fds, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdq, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdt, </span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fdf, HDC hdc)
+{</span><span class="cpp1-comment">// shows the parameters of the command device...
+</span><span class="cpp1-space">	LPWSTR			wszMsg = (LPWSTR)GlobalAlloc(GPTR, 0x400);
+	swprintf(wszMsg, L&quot; fds: %+08.3f    fdq: %+08.3f    fdt: %+08.3f    fdf:  %+08.3f&quot;, fds, fdq, fdt, fdf);
+	TextOutW(hdc, 380, 04, wszMsg, wcslen(wszMsg));
+	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> 0;
+}
+		
+		
+</span><span class="cpp1-comment">//---+----3----+----2----+----1----+---&lt;&gt;---+----1----+----2----+----3----+----4
+
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TheSun(cxCam* pCam)		</span><span class="cpp1-comment">// shows the Sun on the sky
+</span><span class="cpp1-symbol">{
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fLight[] = {+1.0, +1.0, +0.0, +0.0};
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> fColor[] = {+1.0, +1.0, +0.7, +1.0};
+	
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, fLight);		</span><span class="cpp1-comment">// GL_DIFFUSE
+</span><span class="cpp1-space">	
+	glPushMatrix();	
+	glTranslatef(pCam-&gt;x-8200.0, pCam-&gt;y-1840.8, pCam-&gt;z+1880.1);
+	GLUquadric*	pqdrBall = gluNewQuadric();		</span><span class="cpp1-comment">// a quadric required
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pqdrBall)
+	{
+		gluQuadricNormals(pqdrBall, GLU_SMOOTH);
+		gluSphere(pqdrBall, 420.1, 24, 24);
+	}
+	glPopMatrix();
+	glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
+	</span><span class="cpp1-comment">// 
+</span><span class="cpp1-space">	
+	
+}
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TheEarth(cxCam* pCam)
+{
+	GLUquadric*		pqABall;
+	GLUquadric*		pqAtm[3];
+	
+	glPushMatrix();	
+	glTranslatef(pCam-&gt;x+4000.0, pCam-&gt;y-900.0, pCam-&gt;z-900.0);
+	pqABall = gluNewQuadric();			</span><span class="cpp1-comment">// a quadric required
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pqABall)
+	{
+		glEnable(GL_TEXTURE_2D);
+		LoadBitmapTexture(10);
+		gluQuadricTexture(pqABall, 1);
+		gluQuadricNormals(pqABall, GLU_SMOOTH);
+		gluSphere(pqABall, 2400.0f, 40, 40);
+		glDisable(GL_TEXTURE_2D);
+		gluDeleteQuadric(pqABall);
+	}
+	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=0; i&lt;=0; i++)
+	{
+		pqAtm[i] = gluNewQuadric();			</span><span class="cpp1-comment">// a quadric required
+</span><span class="cpp1-space">	}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pqAtm[0]&amp;&amp;FALSE)
+	{
+	   	glColor4f(0.0f, 0.0f, 0.3f, 0.5f);
+	   	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+	   	glEnable(GL_BLEND);
+	   	</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i=0; i&lt;=0; i++)
+	    {
+		   	</span><span class="cpp1-comment">// gluQuadricDrawStyle(pqAtm[i], GLU_FILL);		
+</span><span class="cpp1-space">			gluQuadricNormals(pqAtm[i], GLU_SMOOTH);
+			gluSphere(pqAtm[i], 2000.0f+50.0f*(i+1), 40, 40);
+		}
+		glDisable(GL_BLEND);
+		gluDeleteQuadric(pqAtm[0]);
+	}
+	glPopMatrix();
+}
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TheSky(cxCam* pCam)	</span><span class="cpp1-comment">// draws the sky as a big textured sphere with the center in the point of view
+</span><span class="cpp1-symbol">{
+	GLUquadric*		pqABall = gluNewQuadric();
+	
+	glPushMatrix();
+	glTranslatef(pCam-&gt;x, pCam-&gt;y, pCam-&gt;z);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pqABall)
+	{
+		glEnable(GL_TEXTURE_2D);
+		LoadBitmapTexture(16);
+		gluQuadricTexture(pqABall, 1);
+		gluQuadricNormals(pqABall, GLU_SMOOTH);	
+		gluSphere(pqABall, 2000.0f, 40, 40);
+		glDisable(GL_TEXTURE_2D);
+		gluDeleteQuadric(pqABall);
+	}	
+	glPopMatrix();
+	
+}
+
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TheSea()		</span><span class="cpp1-comment">// draws seawater / textured
+</span><span class="cpp1-symbol">{
+		
+}
+
+</span><span class="cpp1-comment">/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+</span></span>
+</code></pre>
+</body>
+</html>
